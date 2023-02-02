@@ -5,11 +5,17 @@ import { BrowserUtils } from '@azure/msal-browser';
 import { ProfileComponent } from './profile/profile.component';
 import { HomeComponent } from './home/home.component';
 import { FailedComponent } from './failed/failed.component';
+import { TodoComponent } from './todo/todo.component';
 
 const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent,
+    canActivate: [MsalGuard]
+  },
+  {
+    path: 'todo',
+    component: TodoComponent,
     canActivate: [MsalGuard]
   },
   {
