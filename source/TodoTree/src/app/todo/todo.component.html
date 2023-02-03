@@ -1,13 +1,4 @@
-<ng-container *ngIf="taskLists === null">
-Loading
-</ng-container>
 <ng-container *ngIf="taskLists">
-
-  <ng-container *ngIf="loaded != taskLists.length">
-    Loading Tasks ({{loaded}}/{{taskLists.length}})
-  </ng-container>
-  {{taskLists.length}} Task Lists
-
   <ul>
     <li *ngFor="let taskList of taskLists">
        Name: {{taskList.displayName}}
