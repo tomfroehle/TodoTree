@@ -1,1 +1,7 @@
-<app-todo></app-todo>
+<ng-container *ngIf="isLoggedIn">
+  <app-todo></app-todo>
+</ng-container>
+<ng-container *ngIf="!isLoggedIn">
+  Not logged in
+  <button (click)="login()">Login</button>
+</ng-container>
