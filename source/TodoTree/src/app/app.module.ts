@@ -17,13 +17,14 @@ import { IPublicClientApplication, PublicClientApplication, InteractionType, Bro
 import { MsalGuard, MsalInterceptor, MsalBroadcastService, MsalInterceptorConfiguration, MsalModule, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalGuardConfiguration, MsalRedirectComponent } from '@azure/msal-angular';
 import { FailedComponent } from './failed/failed.component';
 import { TodoComponent } from './todo/todo.component';
+import { Client } from '@microsoft/microsoft-graph-client';
+import { AuthCodeMSALBrowserAuthenticationProviderOptions, AuthCodeMSALBrowserAuthenticationProvider } from '@microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser';
 
 export function loggerCallback(logLevel: LogLevel, message: string) {
   console.log(message);
 }
 
-export function MSALInstanceFactory(): IPublicClientApplication {
-  return new PublicClientApplication({
+export const publicClientApplication = new PublicClientApplication({
     auth: {
       clientId: '8367ee60-5a62-4e0d-beb1-62d93087314e',
       authority: 'https://login.microsoftonline.com/common',
@@ -42,7 +43,6 @@ export function MSALInstanceFactory(): IPublicClientApplication {
       }
     }
   });
-}
 
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
@@ -64,6 +64,22 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
   };
 }
 
+function GraphClient(authService: MsalService, clientApplication: PublicClientApplication): Client {
+
+  const options: AuthCodeMSALBrowserAuthenticationProviderOptions = {
+    account: authService.instance.getActiveAccount()!,
+    interactionType: InteractionType.Popup,
+    scopes: ["user.read", "tasks.readWrite"]
+  };
+  const authProvider = new AuthCodeMSALBrowserAuthenticationProvider(clientApplication, options);
+
+
+  // Initialize the Graph client
+  const graphClient = Client.initWithMiddleware({
+      authProvider
+  });
+  return graphClient;
+}
 @NgModule({
   declarations: [
     AppComponent,
@@ -91,11 +107,11 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     },
     {
       provide: MSAL_INSTANCE,
-      useFactory: MSALInstanceFactory
+      useValue: publicClientApplication
     },
     {
       provide: PublicClientApplication,
-      useFactory: MSALInstanceFactory
+      useValue: publicClientApplication
     },
     {
       provide: MSAL_GUARD_CONFIG,
@@ -104,6 +120,11 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     {
       provide: MSAL_INTERCEPTOR_CONFIG,
       useFactory: MSALInterceptorConfigFactory
+    },
+    {
+      provide : Client,
+      useFactory: GraphClient,
+      deps: [MsalService, PublicClientApplication]
     },
     MsalService,
     MsalGuard,
