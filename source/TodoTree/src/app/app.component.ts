@@ -37,7 +37,7 @@ export class AppComponent implements OnInit, OnDestroy {
           this.setLoginDisplay();
         }
       });
-    
+
     this.msalBroadcastService.inProgress$
       .pipe(
         filter((status: InteractionStatus) => status === InteractionStatus.None),

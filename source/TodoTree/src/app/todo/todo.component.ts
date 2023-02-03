@@ -17,11 +17,11 @@ export class TodoComponent implements OnInit {
   async ngOnInit(): Promise<void> {
 
 
-    var result = await this.graphClient.api('/me/todo/lists?$expand=tasks').get();
+    var result = await this.graphClient.api('/me/todo/lists?$expand=tasks&$top=5').get();
 
     var taskLists = result.value as TodoTaskList[];
     for (const taskList of taskLists) {
-      var result2 = await  this.graphClient.api(`/me/todo/lists/${taskList.id}/tasks`).get();
+      var result2 = await  this.graphClient.api(`/me/todo/lists/${taskList.id}/tasks?$top=5`).get();
       taskList.tasks = result2.value;
     }
 
