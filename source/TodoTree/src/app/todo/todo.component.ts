@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MsalService } from '@azure/msal-angular';
-import { InteractionType, IPublicClientApplication, PublicClientApplication } from "@azure/msal-browser";
+import { InteractionType, PublicClientApplication } from "@azure/msal-browser";
 
 import { AuthCodeMSALBrowserAuthenticationProvider, AuthCodeMSALBrowserAuthenticationProviderOptions } from "@microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser";
 import { Client } from "@microsoft/microsoft-graph-client";
-import { GRAPH_ENDPOINT } from '../profile/profile.component';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-todo',
@@ -16,9 +13,8 @@ import { firstValueFrom } from 'rxjs';
 export class TodoComponent implements OnInit {
 
   output = {};
-  output2 = {};
 
-  constructor(private http: HttpClient, private authService: MsalService, private clientApplication: PublicClientApplication) { }
+  constructor(private authService: MsalService, private clientApplication: PublicClientApplication) { }
 
   async ngOnInit(): Promise<void> {
 
@@ -37,13 +33,11 @@ export class TodoComponent implements OnInit {
         authProvider
     });
     try {
-      let userDetails = await graphClient.api('/me').get();
+      let userDetails = await graphClient.api('/me/todo/lists').get();
       this.output = userDetails;
     } catch (error) {
       throw error;
     }
-
-    this.output2 = await firstValueFrom(this.http.get('https://graph.microsoft.com/v1.0/me/todo/lists'));
   }
 
 }
