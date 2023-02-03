@@ -9,17 +9,21 @@ import { Client } from "@microsoft/microsoft-graph-client";
 })
 export class TodoComponent implements OnInit {
 
+  loaded = 0;
   taskLists: TodoTaskList[] | null = null;
 
   constructor(private graphClient: Client) { }
 
   async ngOnInit(): Promise<void> {
-    var result = await this.graphClient.api('/me/todo/lists?$expand=tasks&$top=5').get();
+    var result = await this.graphClient.api('/me/todo/lists?$expand=tasks').get();
     var taskLists = result.value as TodoTaskList[];
-    for (const taskList of taskLists) {
-      var result2 = await  this.graphClient.api(`/me/todo/lists/${taskList.id}/tasks?$top=5`).get();
-      taskList.tasks = result2.value;
-    }
     this.taskLists = taskLists;
-}
+    await Promise.all(taskLists.map(tl => this.loadList(tl)));
+  }
+
+  async loadList(taskList: TodoTaskList) {
+    var tasks = await this.graphClient.api(`/me/todo/lists/${taskList.id}/tasks?$top=5`).get();
+    taskList.tasks = tasks.value;
+    this.loaded++;
+  }
 }
