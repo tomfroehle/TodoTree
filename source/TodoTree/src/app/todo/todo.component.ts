@@ -1,13 +1,15 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TodoTaskList, TodoTask } from "@microsoft/microsoft-graph-types";
 import { Client } from "@microsoft/microsoft-graph-client";
 import {graphviz} from "d3-graphviz";
+
 @Component({
   selector: 'app-todo',
   templateUrl: './todo.component.html',
   styleUrls: ['./todo.component.css']
 })
 export class TodoComponent implements OnInit {
+
 
 
   constructor(private graphClient: Client) { }
@@ -18,7 +20,7 @@ export class TodoComponent implements OnInit {
     await this.loadList(taskLists[0]);
 
     const nodes = taskLists[0].tasks?.map((t,i)=> `node${i} [label="${t.title}"];`).join(' ');
-    const edges = taskLists[0].tasks?.map((t,i)=> `node${i}`).join(' ');
+    const edges = taskLists[0].tasks?.map((_,i)=> `node${i} -> node${i + 1}`).join(' ');
 
     graphviz('#graph').renderDot(`digraph {
       layout=neato
@@ -31,5 +33,9 @@ export class TodoComponent implements OnInit {
     var tasks = await this.graphClient.api(`/me/todo/lists/${taskList.id}/tasks?$filter=status eq 'notStarted'`).get();
     var todoTasks = tasks.value as TodoTask[];
     taskList.tasks = todoTasks;
+  }
+
+  clickGraph(event:any) {
+    console.log(event.target.parentElement);
   }
 }
