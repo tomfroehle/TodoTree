@@ -1,13 +1,19 @@
-{{taskLists.length}} Task Lists
+<ng-container *ngIf="taskLists === null">
+Loading
+</ng-container>
+<ng-container *ngIf="taskLists">
+  {{taskLists.length}} Task Lists
 
-<ul>
-  <li *ngFor="let taskList of taskLists">
-     Name: {{taskList.displayName}}
-     Tasks: {{taskList.tasks?.length}}
-     <ul>
-      <li *ngFor="let task of taskList.tasks">
-        Name: {{task.title}}
-      </li>
-     </ul>
-  </li>
-</ul>
+  <ul>
+    <li *ngFor="let taskList of taskLists">
+       Name: {{taskList.displayName}}
+       Tasks: {{taskList.tasks?.length}}
+       <ul>
+        <li *ngFor="let task of taskList.tasks">
+          Name: {{task.title}}
+        </li>
+       </ul>
+    </li>
+  </ul>
+</ng-container>
+
