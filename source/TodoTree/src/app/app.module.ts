@@ -26,7 +26,7 @@ export function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
       clientId: '8367ee60-5a62-4e0d-beb1-62d93087314e',
-      authority: 'https://login.microsoftonline.com/9c854f1d-7c67-4fdc-9f69-8258ea885b1a',
+      authority: 'https://login.microsoftonline.com/common',
       redirectUri: '/',
       postLogoutRedirectUri: '/'
     },
